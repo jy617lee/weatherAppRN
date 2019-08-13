@@ -4,24 +4,28 @@ import Weather from "./Weather";
 
 export default class App extends Component{
   state = {
-    isLoaded: false
+    isLoaded: false,
+    loadingError:null,
   };
 
   componentDidMount(){
     navigator.geolocation.getCurrentPosition(
       position => {
         this.setState({
-          isLoaded: true
+          // isLoaded: true,
+          loadingError:"something went wrong"
         });
       },
       error => {
-        console.log(error)
+        this.setState({
+          loadingError:error
+        });
       }
     );
   }
 
   render() {
-    const { isLoaded } = this.state;
+    const { isLoaded, loadingError } = this.state;
     return (
       <View style={styles.container}>
         <StatusBar hidden={true} />
@@ -30,6 +34,10 @@ export default class App extends Component{
         ) : (
           <View style={styles.loading}>
             <Text style={styles.loadingText}>Getting Weather Now</Text>
+            { loadingError ? 
+              <Text style={styles.errorText}>{loadingError}</Text>
+              :null
+            }
           </View>
         )}
       </View>
@@ -38,6 +46,11 @@ export default class App extends Component{
 }
 
 const styles = StyleSheet.create({
+  errorText:{
+    color:"red",
+    backgroundColor:"transparent",
+    marginBottom:40
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -51,6 +64,5 @@ const styles = StyleSheet.create({
   loadingText:{
     fontSize: 38,
     marginBottom: 93,
-
   }
 });
